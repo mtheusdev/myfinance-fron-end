@@ -20,7 +20,7 @@ export default new Vuetify({
         primary: colors.deepPurple,
         secondary: colors.deepPurple.lighten2,
         accent: colors.purple.darken3,
-        error: colors.pink.darken1,
+        error: colors.pink.lighten2,
         success: colors.deepPurple.accent1,
         warning: colors.pink.lighten2
       }
