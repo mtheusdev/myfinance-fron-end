@@ -9,15 +9,15 @@
           <v-card-text>
             <v-form>
               <v-text-field prepend-icon="mdi-email" name="email"
-              label="email" type="email"></v-text-field>
-              <v-text-field prepend-icon="mdi-lock" name="password"
+              label="email" type="email" v-model.trim="$v.user.email.$model"></v-text-field>
+              <v-text-field prepend-icon="mdi-lock" v-model.trim="$v.user.password.$model" name="password"
               label="senha" type="password"></v-text-field>
             </v-form>
-            <v-btn color="secondary" block depressed>Criar Conta</v-btn>
+            <v-btn class="mt-3" color="secondary" block depressed>Criar Conta</v-btn>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" large>Login</v-btn>
+            <v-btn @click="submit" :disabled="$v.$invalid" color="primary" class="mb-3" large>Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -26,8 +26,36 @@
 </template>
 
 <script>
+
+import { required, email, minLength } from 'vuelidate/lib/validators'
+
 export default {
-  name: 'Login'
+  name: 'Login',
+  data () {
+    return {
+      user: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  validations: {
+    user: {
+      email: {
+        required,
+        email
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      }
+    }
+  },
+  methods: {
+    submit () {
+      console.log('User: ', this.user)
+    }
+  }
 }
 </script>
 
