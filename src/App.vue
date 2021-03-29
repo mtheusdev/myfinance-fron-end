@@ -1,13 +1,16 @@
 <template>
-  <v-app>
-    <v-content>
+  <v-app dark>
+    <v-main>
       <router-view />
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  created () {
+    this.$vuetify.theme.dark = true
+  }
 }
 </script>
