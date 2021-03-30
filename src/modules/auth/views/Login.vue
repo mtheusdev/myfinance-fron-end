@@ -5,6 +5,8 @@
         <v-card class="elevation-12">
           <v-toolbar color="primary" dark>
             <v-toolbar-title>{{ texts.toolbar }}</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-progress-circular v-show="isLoading" indeterminate color="white" width="2"></v-progress-circular>
           </v-toolbar>
           <v-card-text>
             <v-form>
@@ -22,6 +24,10 @@
             <v-spacer></v-spacer>
             <v-btn @click="submit" :disabled="$v.$invalid" color="primary" class="mb-3" large>{{ texts.toolbar }}</v-btn>
           </v-card-actions>
+          <v-snackbar v-model="showSnackbar" top>
+          {{ error }}
+          <template v-slot:action="{ attrs }">
+          <v-btn color="pink" v-bind="attrs" text icon @click="showSnackbar = false"><v-icon>mdi-close</v-icon></v-btn></template></v-snackbar>
         </v-card>
       </v-flex>
     </v-layout>
@@ -30,7 +36,10 @@
 
 <script>
 
+import AuthService from './../services/auth-service'
+
 import { required, email, minLength } from 'vuelidate/lib/validators'
+import { formatError } from '@/utils'
 
 export default {
   name: 'Login',
@@ -41,7 +50,10 @@ export default {
         email: '',
         password: ''
       },
-      isLogin: true
+      isLogin: true,
+      isLoading: false,
+      error: undefined,
+      showSnackbar: false
     }
   },
   validations () {
@@ -98,8 +110,17 @@ export default {
     }
   },
   methods: {
-    submit () {
-      console.log('User: ', this.user)
+    async submit () {
+      this.isLoading = true
+      try {
+        const authData = this.isLogin ? await AuthService.login(this.user.email, this.user.password) : await AuthService.signup(this.user)
+        console.log('Auth data', authData)
+      } catch (error) {
+        this.error = formatError(error.message)
+        this.showSnackbar = true
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 }
