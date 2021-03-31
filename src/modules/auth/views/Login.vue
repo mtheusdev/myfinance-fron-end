@@ -16,7 +16,7 @@
               :error-messages="emailErrors"
               label="email" type="email" v-model.trim="$v.user.email.$model"></v-text-field>
               <v-text-field prepend-icon="mdi-lock" v-model.trim="$v.user.password.$model" name="password"
-              label="senha" :error-messages="passwordErrors" type="password"></v-text-field>
+              label="senha" :error-messages="passwordErrors" type="password" @keypress.enter="submit"></v-text-field>
             </v-form>
             <v-btn @click="isLogin = !isLogin" class="mt-3" color="secondary" block depressed>{{ texts.button }}</v-btn>
           </v-card-text>

@@ -5,11 +5,14 @@ import store from './store'
 import '@/plugins/vuelidate'
 import vuetify from './plugins/vuetify'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import { errorHandler } from '@/utils'
 
 Vue.config.productionTip = false
+Vue.config.errorHandler = errorHandler
+
 new Vue({
+  vuetify,
   router,
   store,
-  vuetify,
   render: h => h(App)
 }).$mount('#app')
