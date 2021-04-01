@@ -24,7 +24,8 @@ export default new Vuetify({
         success: colors.deepPurple.accent1,
         warning: colors.pink.lighten2,
         error2: colors.pink.accent2,
-        greenPool: colors.teal.accent2
+        greenPool: colors.teal.accent2,
+        darkPurple: colors.purple.darken2
       }
     }
   }
