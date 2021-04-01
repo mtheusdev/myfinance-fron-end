@@ -1,13 +1,19 @@
 <template>
   <div>
     <h1>lançamentos</h1>
-    <h2>MIAUUUUUUUU</h2>
+    <RecordsList/>
   </div>
 </template>
 
 <script>
-export default {
 
+import RecordsList from './../components/RecordsList'
+
+export default {
+  name: 'RecordsHome',
+  components: {
+    RecordsList
+  }
 }
 </script>
 

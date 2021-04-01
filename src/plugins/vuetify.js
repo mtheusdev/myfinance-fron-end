@@ -22,7 +22,9 @@ export default new Vuetify({
         accent: colors.purple.darken3,
         error: colors.pink.lighten2,
         success: colors.deepPurple.accent1,
-        warning: colors.pink.lighten2
+        warning: colors.pink.lighten2,
+        error2: colors.pink.accent2,
+        greenPool: colors.teal.accent2
       }
     }
   }
