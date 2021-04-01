@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar color="darkPurple">
+  <v-toolbar :color="color">
     <v-layout align-center>
       <v-flex xs1>
         <div class="text-left">
@@ -32,7 +32,7 @@ export default {
   name: 'ToolbarByMonth',
   data () {
     return {
-      date: moment()
+      date: undefined
     }
   },
   computed: {
@@ -41,7 +41,9 @@ export default {
     }
   },
   props: {
-    format: String
+    format: String,
+    color: String,
+    month: String
   },
   methods: {
     emit () {
@@ -54,9 +56,13 @@ export default {
     decrement () {
       this.date = this.date.clone().subtract(1, 'month')
       this.emit()
+    },
+    setCurrentMonth () {
+      this.date = this.month ? moment(this.month, this.format) : moment()
     }
   },
   created () {
+    this.setCurrentMonth()
     this.emit()
   }
 }

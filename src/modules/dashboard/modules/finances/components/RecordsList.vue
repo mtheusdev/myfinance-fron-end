@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ToolbarByMonth class="mb-2" format="MM-YYYY" @month="changeMonth"/>
+    <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth"/>
     <v-card>
       <v-card-text v-if="mappedRecordsLength === 0" class="text-center">
         <v-icon size="100" color="grey">mdi-calendar-text</v-icon>
@@ -60,6 +60,9 @@ export default {
     },
     mappedRecordsLength () {
       return Object.keys(this.mappedRecords).length
+    },
+    toolbarColor () {
+      return this.totalAmount < 0 ? 'error2' : 'greenPool2'
     }
   },
   methods: {
@@ -67,6 +70,10 @@ export default {
       return index < Object.keys(object).length - 1
     },
     changeMonth (month) {
+      this.$router.push({
+        path: this.$route.path,
+        query: { month }
+      })
       this.setRecords(month)
     },
     async setRecords (month) {
