@@ -14,7 +14,29 @@ const formatError = message => {
   return messageSplit[messageSplit.length - 1].trim()
 }
 
+const currencyFormater = ({ locale, currency } = { locale: 'pt-BR', currency: 'BRL' }) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency
+  })
+}
+
+const groupBy = (array, key, makeCurrentKey) => {
+  return array.reduce((accumulated, item) => {
+    const currentKey = makeCurrentKey(item, key)
+    return {
+      ...accumulated,
+      [currentKey]: [
+        ...(accumulated[currentKey] || []),
+        item
+      ]
+    }
+  }, {})
+}
+
 export {
+  currencyFormater,
+  groupBy,
   formatError,
   errorHandler
 }
