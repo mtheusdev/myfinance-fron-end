@@ -16,7 +16,7 @@
     <v-btn fab small color="error" title="Nova Despesa" @click="addRecord('debit')">
       <v-icon>mdi-minus</v-icon>
     </v-btn>
-    <v-btn fab small color="primary" title="Nova Receita" @click="addRecord('credit')">
+    <v-btn fab small color="greenPool2" title="Nova Receita" @click="addRecord('credit')">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </v-speed-dial>
