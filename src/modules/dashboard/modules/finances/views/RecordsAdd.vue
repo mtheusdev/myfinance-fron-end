@@ -56,6 +56,7 @@ import moment from 'moment'
 import { decimal, minLength, required } from 'vuelidate/lib/validators'
 import AccountsService from './../services/accounts-service'
 import CategoriesService from './../services/categories-service'
+import RecordsService from './../services/records-service'
 import NumericDisplay from './../components/NumericDisplay'
 export default {
   name: 'RecordsAdd',
@@ -123,8 +124,14 @@ export default {
       }
       this.setTitle({ title })
     },
-    submit () {
-      console.log('Form: ', this.record)
+    async submit () {
+      try {
+        const record = await RecordsService.createRecord(this.record)
+        console.log('Record: ', record)
+        this.$router.push('/dashboard')
+      } catch (error) {
+        console.log('Error creating record: ', error)
+      }
     },
     cancelDateDialog () {
       this.showDateDialog = false
