@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TotalBalance class="mb-2"/>
     <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth"/>
     <v-card>
       <v-card-text v-if="mappedRecordsLength === 0" class="text-center">
@@ -35,12 +36,14 @@ import RecordsListItem from './RecordsListItem'
 import RecordsService from './../services/records-service'
 import formatCurrencyMixin from '@/mixins/format-currency'
 import ToolbarByMonth from './ToolbarByMonth'
+import TotalBalance from './TotalBalance'
 
 export default {
   name: 'RecordsList',
   components: {
     RecordsListItem,
-    ToolbarByMonth
+    ToolbarByMonth,
+    TotalBalance
   },
   data: () => ({
     records: []

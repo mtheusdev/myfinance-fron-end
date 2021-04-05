@@ -20,6 +20,9 @@
           v-for="item in items"
           :key="item.title"
           link
+          :to="item.url"
+          :exact="item.exact"
+          @click.stop="$emit('input',false)"
         >
           <v-list-item-icon >
             <v-icon color="primary">{{ item.icon }}</v-icon>
@@ -51,6 +54,18 @@ export default {
           title: 'Home',
           icon: 'mdi-view-dashboard',
           url: '/dashboard',
+          exact: true
+        },
+        {
+          title: 'Receita',
+          icon: 'mdi-plus',
+          url: '/dashboard/records/add?type=credit',
+          exact: true
+        },
+        {
+          title: 'Despesa',
+          icon: 'mdi-minus',
+          url: '/dashboard/records/add?type=debit',
           exact: true
         }
       ],
