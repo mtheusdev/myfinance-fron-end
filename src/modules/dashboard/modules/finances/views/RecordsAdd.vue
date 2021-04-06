@@ -18,8 +18,27 @@
                   <v-btn :color="color" @click="$refs.dateDialog.save(dateDialogValue)">Ok</v-btn>
                 </v-date-picker>
               </v-dialog>
-              <v-select name="account" label="Conta" prepend-icon="mdi-bank" :items="accounts" item-text="description" item-value="id" v-model="$v.record.accountId.$model"></v-select>
-              <v-select name="category" label="Categoria" prepend-icon="mdi-shape-plus" :items="categories" item-text="description" item-value="id" v-model="$v.record.categoryId.$model"></v-select>
+              <v-select name="account" label="Conta" prepend-icon="mdi-bank" :items="accounts" item-text="description" item-value="id" v-model="$v.record.accountId.$model">
+                <v-list-item
+                slot="prepend-item"
+                ripple
+                @click="add('account')"
+              ><v-icon>mdi-plus</v-icon>
+              <v-list-item-title class="ml-3">Conta</v-list-item-title>
+              </v-list-item>
+              <v-divider slot="prepend-item" class="mt-2"></v-divider>
+              </v-select>
+              <v-select name="category" label="Categoria" prepend-icon="mdi-shape-plus" :items="categories" item-text="description" item-value="id" v-model="$v.record.categoryId.$model">
+                <v-list-item
+                slot="prepend-item"
+                ripple
+                @click="add('category')"
+              >
+              <v-icon>mdi-plus</v-icon>
+              <v-list-item-title class="ml-3">Categoria</v-list-item-title>
+              </v-list-item>
+              <v-divider slot="prepend-item" class="mt-2"></v-divider>
+              </v-select>
               <v-text-field name="description" label="Descrição" prepend-icon="mdi-clipboard-text" type="text" v-model.trim="$v.record.description.$model"></v-text-field>
               <v-text-field v-show="showTagsInput" name="tags" label="Tags (separedas por vírgula)" prepend-icon="mdi-book-variant" type="text" v-model.trim="record.tags"></v-text-field>
               <v-text-field v-show="showNoteInput" name="note" label="Observação" prepend-icon="mdi-message-text" type="text" v-model.trim="record.note"></v-text-field>
@@ -44,6 +63,14 @@
         <v-btn :color="color" large fab class="mt-4 ml-4" @click="submit" :disabled="$v.$invalid">
           <v-icon>mdi-check</v-icon>
         </v-btn>
+        <v-dialog
+          v-model="showAccountCategoryDialog"
+          max-width="350px"
+        >
+          <v-card>
+            <v-card-title>Account or Category</v-card-title>
+          </v-card>
+        </v-dialog>
       </v-flex>
     </v-layout>
   </v-container>
@@ -75,6 +102,8 @@ export default {
         tags: '',
         note: ''
       },
+      entity: '',
+      showAccountCategoryDialog: false,
       dateDialogValue: moment().format('YYYY-MM-DD'),
       showDateDialog: false,
       showNoteInput: false,
@@ -136,6 +165,10 @@ export default {
     cancelDateDialog () {
       this.showDateDialog = false
       this.dateDialogValue = this.record.date
+    },
+    add (entity) {
+      this.showAccountCategoryDialog = true
+      this.entity = entity
     }
   },
   async created () {

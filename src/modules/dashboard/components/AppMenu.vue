@@ -25,10 +25,10 @@
           @click.stop="$emit('input',false)"
         >
           <v-list-item-icon >
-            <v-icon color="primary">{{ item.icon }}</v-icon>
+            <v-icon color="greenPool2">{{ item.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="lalal">{{ item.title }}</v-list-item-title>
+            <v-list-item-title class="white--text">{{ item.title }}</v-list-item-title>
           </v-list-item-content>
 
         </v-list-item>
@@ -84,6 +84,7 @@ export default {
     margin-left: 10px;
   }
   .lalal{
-    color: #9C27B0;
+    color: white;
+    font-size: 1.8rem
   }
 </style>

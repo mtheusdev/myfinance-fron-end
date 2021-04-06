@@ -11,7 +11,7 @@ const createRecord = async variables => {
     mutation: RecordCreateMutation,
     variables,
     update: (proxy, { data: { createRecord } }) => {
-      const month = moment(createRecord.date).format('MM-YYYY')
+      const month = moment(createRecord.date.substr(0, 10)).format('MM-YYYY')
       const variables = { month }
       try {
         const recordsData = proxy.readQuery({
@@ -26,6 +26,28 @@ const createRecord = async variables => {
         })
       } catch (e) {
         console.log('Query "records" has not been read yet!', e)
+      }
+
+      try {
+        const currentDate = moment().endOf('day')
+        const recordDate = moment(createRecord.date.substr(0, 10))
+        const variables = { date: currentDate.format('YYYY-MM-DD') }
+        if (recordDate.isBefore(currentDate)) {
+          const totalBalanceData = proxy.readQuery({
+            query: TotalBalanceQuery,
+            variables: {
+              date: moment().format('YYYY-MM-DD')
+            }
+          })
+          totalBalanceData.totalBalance = +((totalBalanceData.totalBalance + createRecord.amount).toFixed(2))
+          proxy.writeQuery({
+            query: TotalBalanceQuery,
+            variables,
+            data: totalBalanceData
+          })
+        }
+      } catch (e) {
+        console.log('Query "totalBalance" has not been read yet!', e)
       }
     }
   })
