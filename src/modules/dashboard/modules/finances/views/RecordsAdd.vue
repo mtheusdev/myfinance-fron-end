@@ -67,9 +67,7 @@
           v-model="showAccountCategoryDialog"
           max-width="350px"
         >
-          <v-card>
-            <v-card-title>Account or Category</v-card-title>
-          </v-card>
+          <AccountCategoryAdd v-if="showAccountCategoryDialog" :entity="entity" @close="showAccountCategoryDialog = false" @saved="accountCategorySaved"/>
         </v-dialog>
       </v-flex>
     </v-layout>
@@ -85,10 +83,15 @@ import AccountsService from './../services/accounts-service'
 import CategoriesService from './../services/categories-service'
 import RecordsService from './../services/records-service'
 import NumericDisplay from './../components/NumericDisplay'
+import AccountCategoryAdd from './../components/AccountCategoryAdd'
+import { Subject } from 'rxjs'
+import { distinctUntilChanged, mergeMap } from 'rxjs/operators'
+
 export default {
   name: 'RecordsAdd',
   components: {
-    NumericDisplay
+    NumericDisplay,
+    AccountCategoryAdd
   },
   data () {
     return {
@@ -103,6 +106,8 @@ export default {
         note: ''
       },
       entity: '',
+      subscriptions: [],
+      operationSubject$: new Subject(),
       showAccountCategoryDialog: false,
       dateDialogValue: moment().format('YYYY-MM-DD'),
       showDateDialog: false,
@@ -169,20 +174,28 @@ export default {
     add (entity) {
       this.showAccountCategoryDialog = true
       this.entity = entity
+    },
+    accountCategorySaved (item) {
+      this.showAccountCategoryDialog = false
+      this.record[`${this.entity}Id`] = item.id
     }
   },
   async created () {
     this.changeTitle(this.$route.query.type)
-    this.accounts = await AccountsService.accounts()
-    this.categories = await CategoriesService.categories({ operation: this.$route.query.type })
+    this.subscriptions.push(AccountsService.accounts().subscribe(accounts => (this.accounts = accounts)))
+    this.subscriptions.push(this.operationSubject$.pipe(distinctUntilChanged(), mergeMap(operation => CategoriesService.categories({ operation }))).subscribe(categories => (this.categories = categories)))
+    this.operationSubject$.next(this.$route.query.type)
   },
   async beforeRouteUpdate (to, from, next) {
     const { type } = to.query
     this.changeTitle(type)
     this.record.type = type.toUpperCase()
     this.record.categoryId = ''
-    this.categories = await CategoriesService.categories({ operation: type })
+    this.operationSubject$.next(type)
     next()
+  },
+  destroyed () {
+    this.subscriptions.forEach(s => s.unsubscribe())
   }
 }
 </script>

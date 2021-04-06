@@ -50,7 +50,8 @@ export default {
   },
   data: () => ({
     records: [],
-    monthSubject$: new Subject()
+    monthSubject$: new Subject(),
+    subscriptions: []
   }),
   mixins: [
     amountColorMixin,
@@ -87,10 +88,15 @@ export default {
       this.monthSubject$.next({ month })
     },
     setRecords (month) {
-      this.monthSubject$.pipe(
-        mergeMap(variables => RecordsService.records(variables))
-      ).subscribe(records => (this.records = records))
+      this.subscriptions.push(
+        this.monthSubject$.pipe(
+          mergeMap(variables => RecordsService.records(variables))
+        ).subscribe(records => (this.records = records))
+      )
     }
+  },
+  destroyed () {
+    this.subscriptions.forEach(s => s.unsubscribe())
   }
 }
 </script>
