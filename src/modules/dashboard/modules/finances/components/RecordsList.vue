@@ -2,7 +2,7 @@
   <div>
     <TotalBalance class="mb-2"/>
     <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth" :showSlot="true">
-      <RecordsFilter/>
+      <RecordsFilter @filter="filter"/>
     </ToolbarByMonth>
     <v-card>
       <v-card-text v-if="mappedRecordsLength === 0" class="text-center">
@@ -43,7 +43,8 @@ import ToolbarByMonth from './ToolbarByMonth'
 import TotalBalance from './TotalBalance'
 import { Subject } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
-
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('finances')
 export default {
   name: 'RecordsList',
   components: {
@@ -54,7 +55,7 @@ export default {
   },
   data: () => ({
     records: [],
-    monthSubject$: new Subject(),
+    filtersSubject$: new Subject(),
     subscriptions: []
   }),
   mixins: [
@@ -78,7 +79,8 @@ export default {
     },
     toolbarColor () {
       return this.totalAmount < 0 ? 'error2' : 'greenPool2'
-    }
+    },
+    ...mapState(['filters', 'month'])
   },
   methods: {
     showDivider (index, object) {
@@ -89,14 +91,20 @@ export default {
         path: this.$route.path,
         query: { month }
       })
-      this.monthSubject$.next({ month })
+      this.filtersSubject$.next({ month })
+      this.setMonth({ month })
+      this.filter()
     },
-    setRecords (month) {
+    setRecords () {
       this.subscriptions.push(
-        this.monthSubject$.pipe(
+        this.filtersSubject$.pipe(
           mergeMap(variables => RecordsService.records(variables))
         ).subscribe(records => (this.records = records))
       )
+    },
+    ...mapActions(['setMonth']),
+    filter () {
+      this.filtersSubject$.next({ month: this.month, ...this.filters })
     }
   },
   destroyed () {
