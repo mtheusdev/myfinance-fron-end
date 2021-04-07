@@ -57,6 +57,12 @@ export default {
           exact: true
         },
         {
+          title: 'Relatórios',
+          icon: 'mdi-chart-bar',
+          url: '/dashboard/reports',
+          exact: true
+        },
+        {
           title: 'Receita',
           icon: 'mdi-plus',
           url: '/dashboard/records/add?type=credit',

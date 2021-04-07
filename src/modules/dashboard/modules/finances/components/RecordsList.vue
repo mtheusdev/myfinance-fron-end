@@ -1,7 +1,7 @@
 <template>
   <div>
     <TotalBalance class="mb-2"/>
-    <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth" :showSlot="true">
+    <ToolbarByMonth :month="month || $route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth" :showSlot="true">
       <RecordsFilter @filter="filter"/>
     </ToolbarByMonth>
     <v-card>
