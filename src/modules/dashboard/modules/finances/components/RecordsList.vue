@@ -1,7 +1,9 @@
 <template>
   <div>
     <TotalBalance class="mb-2"/>
-    <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth"/>
+    <ToolbarByMonth :month="$route.query.month" :color="toolbarColor" class="mb-2" format="MM-YYYY" @month="changeMonth" :showSlot="true">
+      <RecordsFilter/>
+    </ToolbarByMonth>
     <v-card>
       <v-card-text v-if="mappedRecordsLength === 0" class="text-center">
         <v-icon size="100" color="grey">mdi-calendar-text</v-icon>
@@ -34,6 +36,7 @@ import amountColorMixin from './../mixins/amount-color'
 import moment from 'moment'
 import { groupBy } from '@/utils'
 import RecordsListItem from './RecordsListItem'
+import RecordsFilter from './RecordsFilter'
 import RecordsService from './../services/records-service'
 import formatCurrencyMixin from '@/mixins/format-currency'
 import ToolbarByMonth from './ToolbarByMonth'
@@ -46,7 +49,8 @@ export default {
   components: {
     RecordsListItem,
     ToolbarByMonth,
-    TotalBalance
+    TotalBalance,
+    RecordsFilter
   },
   data: () => ({
     records: [],
