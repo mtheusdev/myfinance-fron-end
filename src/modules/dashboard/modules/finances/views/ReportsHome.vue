@@ -1,9 +1,10 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <ToolbarByMonth format="MM-YYYY" color="primary"
+      <ToolbarByMonth format="MM-YYYY"
         :month="month || $route.query.month"
         @month="changeMonth"
+        :color="color"
       />
     </v-flex>
     <v-flex v-for="chart in charts" :key="chart.title" xs12 sm6 md6 lg6 xl6>
@@ -63,6 +64,20 @@ export default {
       const ctx = ref.getContext('2d')
       return new Chart(ctx, options)
     },
+    updateOrCreateChart (chartId, options) {
+      if (this[chartId]) {
+        this[chartId].data.datasets = options.data.datasets
+        if (options.data.labels) {
+          this[chartId].data.labels = options.data.labels
+        }
+        this[chartId].update()
+        return this[chartId]
+      }
+      const ref = Array.isArray(this.$refs[chartId]) ? this.$refs[chartId][0] : this.$refs[chartId]
+      const ctx = ref.getContext('2d')
+      this[chartId] = new Chart(ctx, options)
+      return this[chartId]
+    },
     setRecords () {
       this.subscriptions.push(
         this.monthSubject$.pipe(mergeMap(month => RecordsService.records({ month }))).subscribe(records => {
@@ -73,7 +88,7 @@ export default {
     },
     setCharts () {
       // receitas e despesas
-      const chartIncomesExpensesConfigs = generateChartConfigs({
+      this.updateOrCreateChart('chartIncomesExpenses', generateChartConfigs({
         type: 'bar',
         items: this.records,
         keyToGroup: 'type',
@@ -83,37 +98,23 @@ export default {
           this.$vuetify.theme.themes.dark.greenPool2,
           this.$vuetify.theme.themes.dark.error
         ]
-      })
-      if (this.chartIncomesExpenses) {
-        this.chartIncomesExpenses.data.datasets = chartIncomesExpensesConfigs.data.datasets
-        this.chartIncomesExpenses.update()
-      } else {
-        this.chartIncomesExpenses = this.createChart('chartIncomesExpenses', chartIncomesExpensesConfigs)
-      }
-      // despesas por categoria
-      const chartCategoryExpensesConfigs = generateChartConfigs({
+      }))
+      this.updateOrCreateChart('chartCategoryExpenses', generateChartConfigs({
         type: 'doughnut',
         items: this.records.filter(r => r.type === 'DEBIT'),
         keyToGroup: 'category.description',
-        keyOfValue: 'amount',
-        backgroundColors: [
-          this.$vuetify.theme.themes.dark.accent,
-          this.$vuetify.theme.themes.dark.primary,
-          this.$vuetify.theme.themes.dark.greenPool,
-          this.$vuetify.theme.themes.dark.greenPool2
-        ]
-      })
-      if (this.chartCategoryExpenses) {
-        this.chartCategoryExpenses.data.datasets = chartCategoryExpensesConfigs.data.datasets
-        this.chartCategoryExpenses.data.labels = chartCategoryExpensesConfigs.data.labels
-        this.chartCategoryExpenses.update()
-      } else {
-        this.chartCategoryExpenses = this.createChart('chartCategoryExpenses', chartCategoryExpensesConfigs)
-      }
+        keyOfValue: 'amount'
+      }))
     }
   },
   computed: {
-    ...mapState('finances', ['month'])
+    ...mapState('finances', ['month']),
+    recordsSum () {
+      return this.records.reduce((acc, record) => acc + record.amount, 0)
+    },
+    color () {
+      return this.recordsSum < 0 ? 'error2' : 'greenPool2'
+    }
   },
   components: {
     ToolbarByMonth

@@ -1,3 +1,4 @@
+import colors from 'vuetify/es5/util/colors'
 const errorHandler = (err, vm, info) => {
   console.log('Vue [error handler]: ', err, info)
   const jwtErrors = ['jwt malformed', 'jwt expired', 'jwt not active', 'invalid token']
@@ -46,6 +47,26 @@ const idx = (object, keyPath) => {
   )
 }
 
+const generateColors = (length) => {
+  const palletes = Object.keys(colors).filter(pallete => pallete !== 'shades')
+  const tones = [
+    'base',
+    'darken1',
+    'lighten1'
+  ]
+  let currentPallete = 0
+  let currentTone = 0
+  return Array(length).fill().map((item, index) => {
+    const color = colors[palletes[currentPallete]][tones[currentTone]]
+    currentPallete++
+    if ((index + 1) % palletes.length === 0) {
+      currentPallete = 0
+      currentTone++
+    }
+    return color
+  })
+}
+
 const generateChartOptions = (type) => {
   let tooltips = {}
   switch (type) {
@@ -55,6 +76,17 @@ const generateChartOptions = (type) => {
           title () {},
           label (tooltip, data) {
             return data.datasets[tooltip.datasetIndex].label
+          }
+        }
+      }
+      break
+    case 'doughnut':
+      tooltips = {
+        callbacks: {
+          label (tooltip, data) {
+            const label = data.labels[tooltip.index]
+            const value = currencyFormater().format(data.datasets[tooltip.datasetIndex].data[tooltip.index])
+            return `${label}: ${value}`
           }
         }
       }
@@ -94,7 +126,7 @@ const generateChartData = ({ items, keyToGroup, keyOfValue, aliases, type, backg
       return {
         datasets: [{
           data: labels.map(label => response[label] >= 0 ? response[label] : -response[label]),
-          backgroundColor: backgroundColors,
+          backgroundColor: backgroundColors || generateColors(labels.length),
           borderWidth: 0
         }],
         labels: items.length > 0 ? labels : []
