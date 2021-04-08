@@ -43,7 +43,8 @@ export default {
           refId: 'chartCategoryExpenses'
         }
       ],
-      chartIncomesExpenses: undefined
+      chartIncomesExpenses: undefined,
+      chartCategoryExpenses: undefined
     }
   },
   methods: {
@@ -71,6 +72,7 @@ export default {
       )
     },
     setCharts () {
+      // receitas e despesas
       const chartIncomesExpensesConfigs = generateChartConfigs({
         type: 'bar',
         items: this.records,
@@ -87,6 +89,26 @@ export default {
         this.chartIncomesExpenses.update()
       } else {
         this.chartIncomesExpenses = this.createChart('chartIncomesExpenses', chartIncomesExpensesConfigs)
+      }
+      // despesas por categoria
+      const chartCategoryExpensesConfigs = generateChartConfigs({
+        type: 'doughnut',
+        items: this.records.filter(r => r.type === 'DEBIT'),
+        keyToGroup: 'category.description',
+        keyOfValue: 'amount',
+        backgroundColors: [
+          this.$vuetify.theme.themes.dark.accent,
+          this.$vuetify.theme.themes.dark.primary,
+          this.$vuetify.theme.themes.dark.greenPool,
+          this.$vuetify.theme.themes.dark.greenPool2
+        ]
+      })
+      if (this.chartCategoryExpenses) {
+        this.chartCategoryExpenses.data.datasets = chartCategoryExpensesConfigs.data.datasets
+        this.chartCategoryExpenses.data.labels = chartCategoryExpensesConfigs.data.labels
+        this.chartCategoryExpenses.update()
+      } else {
+        this.chartCategoryExpenses = this.createChart('chartCategoryExpenses', chartCategoryExpensesConfigs)
       }
     }
   },
